@@ -11,4 +11,12 @@ import scrapy
 class JdspiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    name = scrapy.Field()
+    title = scrapy.Field()
+    id = scrapy.Field()
+    price = scrapy.Field()
+    discount = scrapy.Field()
+    gift_id = scrapy.Field()
+    merchant = scrapy.Field()
+    date = scrapy.Field()
+
