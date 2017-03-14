@@ -1,8 +1,9 @@
 import scrapy
 import re
 from scrapy.loader import ItemLoader
-from JDSpider.items import JdspiderItem
-
+from JDSpider.items import JdspiderItem, JdItemLoader
+from datetime import datetime
+import json
 
 class JDSpider(scrapy.Spider):
     name = 'JDSpider'
@@ -24,12 +25,20 @@ class JDSpider(scrapy.Spider):
 
     def parse(self, response):
         product_id = self.get_product_id(response.url)
-        print(product_id)
         if product_id:
-            print('haha')
-            p = ItemLoader(item=JdspiderItem(), response=response)
-            p.add_xpath('name', '//div[@id="crumb-wrap"]//div[@class="item ellipsis"]/text()')
-            p.add_css('title', 'div.sku-name::text')#'//div[@class="itemInfo-wrap"]/div[@class="sku-name"]/text()')
-            p.add_value('product_id', product_id)
-            a = p.load_item()
-            print(a)
+            j = JdItemLoader(item=JdspiderItem(), response=response)
+            j.add_xpath('name', '//div[@id="crumb-wrap"]//div[@class="item ellipsis"]/text()')
+            j.add_xpath('title', '//div[@class="w"]/div[@class="product-intro clearfix"]//div[@class="sku-name"]/text()')
+            j.add_value('product_id', product_id)
+            j.add_value('utc_timestamp', int(datetime.utcnow().timestamp()))
+            item = j.load_item()
+            request = scrapy.Request('https://p.3.cn/prices/mgets?skuIds=J_' + str(product_id),
+                                    callback=self.parse_page2)
+            request.meta['item'] = item
+            yield request
+
+    def parse_page2(self, response):
+        item = response.meta['item']
+        print(item)
+        print(json.loads(response.body_as_unicode())[0]['p'])
+        yield item

@@ -6,18 +6,25 @@
 # http://doc.scrapy.org/en/latest/topics/items.html
 
 import scrapy
-from scrapy.contrib.loader.processor import TakeFirst
+from scrapy.loader.processors import TakeFirst, MapCompose
+from scrapy.loader import ItemLoader
+
+class JdItemLoader(ItemLoader):
+    default_input_processor = MapCompose(str.strip)
+    default_output_processor = TakeFirst()
+    utc_timestamp_in = TakeFirst()
+
 
 class JdspiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    name = scrapy.Field(output_processor=TakeFirst())
-    title = scrapy.Field(output_processor=TakeFirst())
-    product_id = scrapy.Field(output_processor=TakeFirst())
-    price = scrapy.Field(output_processor=TakeFirst())
-    discount = scrapy.Field(output_processor=TakeFirst())
-    gift_id = scrapy.Field(output_processor=TakeFirst())
-    merchant = scrapy.Field(output_processor=TakeFirst())
-    express = scrapy.Field(output_processor=TakeFirst())
-    date = scrapy.Field(output_processor=TakeFirst())
+    name = scrapy.Field()
+    title = scrapy.Field()
+    product_id = scrapy.Field()
+    price = scrapy.Field()
+    discount = scrapy.Field()
+    gift_id = scrapy.Field()
+    merchant = scrapy.Field()
+    express = scrapy.Field()
+    utc_timestamp = scrapy.Field()
 

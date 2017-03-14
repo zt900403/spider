@@ -1,2 +1,0 @@
-from items import JdspiderItem
-
