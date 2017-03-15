@@ -26,19 +26,25 @@ class JDSpider(scrapy.Spider):
     def parse(self, response):
         product_id = self.get_product_id(response.url)
         if product_id:
-            j = JdItemLoader(item=JdspiderItem(), response=response)
-            j.add_xpath('name', '//div[@id="crumb-wrap"]//div[@class="item ellipsis"]/text()')
-            j.add_xpath('title', '//div[@class="w"]/div[@class="product-intro clearfix"]//div[@class="sku-name"]/text()')
-            j.add_value('product_id', product_id)
-            j.add_value('utc_timestamp', int(datetime.utcnow().timestamp()))
-            item = j.load_item()
-            request = scrapy.Request('https://p.3.cn/prices/mgets?skuIds=J_' + str(product_id),
-                                    callback=self.parse_page2)
+            loader = JdItemLoader(item=JdspiderItem(), response=response)
+            loader.add_xpath('name', '//div[@id="crumb-wrap"]//div[@class="item ellipsis"]/text()')
+            loader.add_xpath('title', \
+            '//div[@class="w"]/div[@class="product-intro clearfix"]//div[@class="sku-name"]/text()')
+            loader.add_value('product_id', product_id)
+            loader.add_xpath('merchant', '//div[@class="J-hove-wrap EDropdown fr"]/div[@class="item"]/div[@class="name"]/a/text()')
+            loader.add_xpath('merchant_grade', '//div[@class="J-hove-wrap EDropdown fr"]/div[@class="item"]/div[@class="name"]/em/text()')
+            loader.add_xpath('merchant_grade', '//em[@class="evaluate-grade"]/span/a/text()')
+            loader.add_value('utc_timestamp', int(datetime.utcnow().timestamp()))
+            item = loader.load_item()
+            request = scrapy.Request('https://p.3.cn/prices/mgets?skuIds=J_' + str(product_id), \
+                                    callback=self.parse_price)
             request.meta['item'] = item
             yield request
 
-    def parse_page2(self, response):
+    def parse_price(self, response):
         item = response.meta['item']
-        print(item)
-        print(json.loads(response.body_as_unicode())[0]['p'])
+        loader = JdItemLoader(item=item, response=response)
+        loader.add_value('price', json.loads(response.body_as_unicode())[0]['p'])
+        item = loader.load_item()
         yield item
+

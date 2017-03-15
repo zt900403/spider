@@ -25,6 +25,7 @@ class JdspiderItem(scrapy.Item):
     discount = scrapy.Field()
     gift_id = scrapy.Field()
     merchant = scrapy.Field()
+    merchant_grade = scrapy.Field()
     express = scrapy.Field()
     utc_timestamp = scrapy.Field()
 
