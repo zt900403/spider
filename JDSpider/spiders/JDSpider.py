@@ -10,12 +10,7 @@ class JDSpider(scrapy.Spider):
     name = 'JDSpider'
 
     start_urls = [
-        #'http://www.jd.com'
-        'https://item.jd.com/4245882.html',
-        'https://item.jd.com/3878237.html?cpdad=1DLSUE',
-        'https://item.jd.com/2386353.html',
-        'https://item.jd.com/10605700987.html',
-
+        'http://www.jd.com'
     ]
 
     id_regex = re.compile(r'(\d+).html')

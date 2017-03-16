@@ -10,4 +10,4 @@
 ## run JDSpider
 1. `#git clone https://github.com/zt900403/spider.git JDSpider`
 2. `#cd JDSpider`
-3. `#scrapy crawl JDSpider`
+3. `#scrapy crawl JDSpider --nolog`
